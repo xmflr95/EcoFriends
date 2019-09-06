@@ -1,4 +1,6 @@
 # EcoFriends
+=============
+**Link**: xmflr95.cafe24.com
 
 ![index](./git_image/index.png)
 <br><br>
@@ -21,5 +23,10 @@ MySQL서버에 저장할 쿼리문은 **testSql.sql** 파일을 이용하시면 
       src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
 </script>
 ```
+
+* * *
+## **PHP 7.0을 위한 수정이 이루어졌습니다.**(**Update for PHP 7.0**)
+-> 기존 mysql_* 함수를 모두 mysqli_* 함수로 대체되었습니다.
+* * *
 
 많은 피드백 부탁드립니다.
