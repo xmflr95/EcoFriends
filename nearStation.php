@@ -34,7 +34,7 @@ session_start();
         }
 
         .w3-sidebar a {
-            font-family: "zRoboto", sans-serif
+            font-family: "Roboto", sans-serif
         }
 
         body,
@@ -124,19 +124,19 @@ session_start();
 
          @media (min-width: 768px) and (max-width: 991.98px) {
             #map {
-              height: 650px;
+              height: 750px;
            }
          }
 
          @media (min-width: 992px) and (max-width: 1199.98px) {
             #map {
-              height: 650px;
+              height: 800px;
            }
          }
 
          @media (min-width: 1200px) {
             #map {
-              height: 800px;
+              height: 1000px;
            }
          }
         
@@ -181,7 +181,8 @@ include('sidebar.php');
     <div class="w3-container w3-margin-bottom w3-fixed menuBtn">
         <div id="rSelec">
             <label for="radiusSelect">거리:&nbsp;</label>
-            <select class="w3-select" id="radiusSelect" label="Radius" name="option" autofocus tabindex="1">
+            <select class="w3-select" id="radiusSelect" label="Radius" name="option">
+                <option value="100">100 kms</option>
                 <option value="50">50 kms</option>
                 <option value="30">30 kms</option>
                 <option value="10">10 kms</option>
@@ -193,7 +194,7 @@ include('sidebar.php');
             <select class="w3-select" id="locationSelect" style="visibility: hidden"></select>
         </div>
         <div id="addrSearch">
-            <input class="w3-btn w3-green w3-hover-teal" type="button" id="myloc" value="내 위치 보기" tabindex="2"/>
+            <input class="w3-btn w3-green w3-hover-teal" type="button" id="myloc" value="내 위치 보기" />
         </div>
 
         <!-- <input type="button" id="searchButton" value="Search" /> -->
@@ -262,7 +263,7 @@ include('sidebar.php');
             center: koreaCenter,
             zoom: 8,
             maxZoom: 19,
-            minZoom: 7,
+            minZoom: 8,
             
             // map control options
             mapTypeId: 'roadmap',
@@ -354,18 +355,15 @@ include('sidebar.php');
                   parseFloat(markerNodes[i].getAttribute("lat")),
                   parseFloat(markerNodes[i].getAttribute("lng")));
                var type = markerNodes[i].getAttribute("type");
-               // var f_status = markerNodes[i].getAttribute("f_status");
+               var f_status = markerNodes[i].getAttribute("f_status");
 
                createOption(name, distance, i);
-               // createMarker(id, latlng, name, address, type, f_status);
-               createMarker(id, latlng, name, address, type);
+               createMarker(id, latlng, name, address, type, f_status);
 
                bounds.extend(myPlace);
                bounds.extend(latlng);
             }
-            createUserMarker();
-
-            map.fitBounds(bounds);
+            map.fitBounds(bounds, 10);
             
             locationSelect.style.visibility = "visible";
             locationSelect.onchange = function () {
@@ -384,7 +382,7 @@ include('sidebar.php');
          infoWindow.open(map);
       }
 
-      function createMarker(id, latlng, name, address, type) {
+      function createMarker(id, latlng, name, address, type, f_status) {
 
          var infowincontent = document.createElement('div');
          infowincontent.setAttribute('class', 'w3-container');
@@ -418,14 +416,13 @@ include('sidebar.php');
          var addBtn = document.createElement('button');
          addBtn.setAttribute('class', 'w3-button w3-teal w3-hover-green');
          addBtn.setAttribute('id', 'favBtn');
-         addBtn.innerHTML = "즐겨찾기";
-         // if(f_status == "" || f_status == null) {
-         //    addBtn.innerHTML = "즐겨찾기";
-         // } else {
-         //    addBtn.innerHTML = "즐겨찾기 삭제";
-         // }
+         if(f_status == "" || f_status == null) {
+            addBtn.innerHTML = "즐겨찾기";
+         } else {
+            addBtn.innerHTML = "즐겨찾기 삭제";
+         }
          addBtn.onclick = function () {
-            addFavor(id);
+            addFavor(id, f_status);
          };
          infowincontent.appendChild(addBtn);
 
@@ -440,31 +437,13 @@ include('sidebar.php');
             infoWindow.open(map, marker);
          });
 
-         markers.push(marker);
-      }
-
-      function createUserMarker() {
          var userInfowin = document.createElement('div');
          var strong2 = document.createElement('strong');
          strong2.textContent = "당신의 현재 위치";
          strong2.setAttribute('class', 'w3-xlarge');
+         infowincontent.appendChild(strong2);
          userInfowin.appendChild(strong2);
-
-         userInfowin.appendChild(document.createElement('br'));
-         userInfowin.appendChild(document.createElement('br'));
-
-         var info_lat = document.createElement('text');
-         info_lat.textContent = "위도 : " + nowLoc.lat;
-         info_lat.setAttribute('class', 'w3-default');
-         userInfowin.appendChild(info_lat);
-         //<br>
-         userInfowin.appendChild(document.createElement('br'));
-
-         var info_lng = document.createElement('text');
-         info_lng.textContent = "경도 : " + nowLoc.lng;
-         info_lng.setAttribute('class', 'w3-default');
-         userInfowin.appendChild(info_lng);
-
+         
          var userMarker = new google.maps.Marker({
             map: map,
             draggable: false,
@@ -480,6 +459,8 @@ include('sidebar.php');
             infoWindow.setContent(userInfowin);
             infoWindow.open(map, userMarker);
          });
+
+         markers.push(marker);
          markers.push(userMarker);
       }
 
@@ -533,15 +514,15 @@ include('sidebar.php');
                   alert(this.responseText);
                   var fBtn = document.getElementById('favBtn').innerHTML;
                   
-                  // if (f_status == null || f_status == undefined) { // 로그인 안했을 때
-                  // document.getElementById('favBtn').innerHTML = "즐겨찾기";
-                  // } else { // 로그인 했을 경우
+                  if (f_status == null || f_status == undefined) { // 로그인 안했을 때
+                     document.getElementById('favBtn').innerHTML = "즐겨찾기";
+                  } else { // 로그인 했을 경우
                      if (fBtn == "즐겨찾기") {
                         document.getElementById('favBtn').innerHTML = "즐겨찾기 삭제";
                      } else {
                         document.getElementById('favBtn').innerHTML = "즐겨찾기";
                      }
-                  // }
+                  }
                }
             };
             xmlhttp.open("GET","favControl.php?q="+num, true);
@@ -552,7 +533,7 @@ include('sidebar.php');
       function doNothing() {}
    </script>
    <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjns8IGUUxUZmAQxSxHQfXVS3ns5QdMkg&callback=initMap">
    </script>
 
 <!-- //Map Script -->

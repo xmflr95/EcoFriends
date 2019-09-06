@@ -47,7 +47,7 @@ if($result1->num_rows > 0) {
         echo "<tr>";
         echo "<td class='w3-center'>$favcnt</td>";
         echo "<td>$f_cityname</td>";
-        echo "<td><a href='allStation.php?fid=$fm_id' style='text-decoration:none; font-weight:bold;'>$f_name</a></td>";
+        echo "<td>$f_name</td>";
         echo "<td class='w3-center'><button class='w3-button w3-hover-blue' style='padding: 0; margin: 0;' onclick='deleteFav($fm_id)';><i class='fa fa-times'></i></button></td>";
         echo "</tr>";
 

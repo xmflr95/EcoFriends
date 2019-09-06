@@ -1,7 +1,7 @@
 <?php 
+session_start();
 require("dbinfo.php");
 $q = intval($_GET['q']);
-session_start();
 
 // $q = $_POST['map_id'];
 
@@ -21,7 +21,7 @@ if(!isset($_SESSION['email']) || !isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
 
     // user에서 가져올 유저번호, 유저 이메일, 유저 이름
-    $sql = "SELECT user_id, user_email, user_name FROM usertbl WHERE user_email='$useremail' AND user_name='$username' ";
+    $sql = "SELECT user_id, user_email, user_name FROM usertbl WHERE user_email='$useremail'";
 
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();

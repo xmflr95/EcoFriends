@@ -1,31 +1,6 @@
 <!DOCTYPE html>
 <?php 
 session_start(); 
-require("dbinfo.php");
-
-if(isset($_SESSION['email']) || isset($_SESSION['username'])) {
-// Create connection & check connect
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-   die("Connection failed: " . $conn->connect_error);
-}
-
-$useremail = $_SESSION['email'];
-$username = $_SESSION['username'];
-
-$sql = "SELECT user_id FROM usertbl WHERE user_email='$useremail' AND user_name='$username' ";
-
-$result = $conn->query($sql);
-$row = $result->fetch_assoc();
-
-$usr_id = $row['user_id'];
-
-// echo "<script>console.log('세션 유저넘버 : ' + '$usr_id');</script>";
-
-} else {
-   $usr_id = null;
-}
 ?>
 <html lang="ko">
 <head>
@@ -154,7 +129,7 @@ $usr_id = $row['user_id'];
 
          @media (min-width: 768px) and (max-width: 991.98px) {
             #map {
-              height: 650px;
+              height: 750px;
            }
 
            #addressInput {
@@ -169,7 +144,7 @@ $usr_id = $row['user_id'];
 
          @media (min-width: 992px) and (max-width: 1199.98px) {
             #map {
-              height: 650px;
+              height: 800px;
            }
 
            #addressInput {
@@ -184,7 +159,7 @@ $usr_id = $row['user_id'];
 
          @media (min-width: 1200px) {
             #map {
-              height: 800px;
+              height: 1000px;
            }
          }
         
@@ -233,9 +208,9 @@ include('sidebar.php');
         </div> -->
         <div id="rSelec">
             <label for="addressInput">장소:&nbsp;</label>
-            <input class="w3-input" type="text" id="addressInput" size="20" autofocus onkeydown="Enter_Check();" tabindex="1"/>
+            <input class="w3-input" type="text" id="addressInput" size="20" />
             <label for="radiusSelect">거리:&nbsp;</label>
-            <select class="w3-select" id="radiusSelect" label="Radius" name="option" tabindex="2">
+            <select class="w3-select" id="radiusSelect" label="Radius" name="option">
                 <option value="500">500 kms</option>
                 <option value="250">250 kms</option>
                 <option value="200">200 kms</option>
@@ -249,10 +224,10 @@ include('sidebar.php');
                 <option value="1">1 kms</option>
             </select>
 
-            <select class="w3-select" id="locationSelect" style="visibility: hidden" name="option" tabindex="3"></select>
+            <select class="w3-select" id="locationSelect" style="visibility: hidden" name="option"></select>
         </div>
 
-        <input class="w3-btn w3-green w3-hover-teal" type="button" id="searchButton" value="검색" tabindex="4" />
+        <input class="w3-btn w3-green w3-hover-teal" type="button" id="searchButton" value="검색" />
    </div>
 
     <div class="w3-display-container w3-container w3-margin-bottom" id="mapcontent">
@@ -298,8 +273,6 @@ include('sidebar.php');
       var markers = [];
       var infoWindow;
       var locationSelect;
-      var mid = getQueryStringObject();
-      var mapNum = mid.fid;
 
       // custom icons
       var customIcon = {
@@ -335,30 +308,21 @@ include('sidebar.php');
             name: 'AC완속',
             icon: '../mapicon/st4.png'
          },
-
-
       }
 
       // 지도를 한국 내에서만 보도록
-      // var SOUTH_KOREA_BOUNDS = {
-      // north: 38.8955,
-      // south: 33.0640,
-      // west: 124.1100,
-      // east: 131.5242,
-      // };
-
-      var daegu = {
-         lat: 35.848987,
-         lng: 128.72818
-      }
+      var SOUTH_KOREA_BOUNDS = {
+      north: 38.8955,
+      south: 33.0640,
+      west: 124.1100,
+      east: 131.5242,
+      };
 
       function initMap() {
          var koreaCenter = {
             lat: 36.7653,
             lng: 127.9532
          };
-
-         
          map = new google.maps.Map(document.getElementById('map'), {
             // 지도 처음 위치
             center: koreaCenter,
@@ -381,14 +345,9 @@ include('sidebar.php');
                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
             }
          });
-
          infoWindow = new google.maps.InfoWindow();
-         // 버튼에 이벤트 추가
+
          searchButton = document.getElementById("searchButton").onclick = searchLocations;
-         
-         if (mapNum != null) {
-            favorLocation(mapNum);
-         }
 
          locationSelect = document.getElementById("locationSelect");
          locationSelect.onchange = function () {
@@ -402,30 +361,6 @@ include('sidebar.php');
          map.addListener('click', function() {
             infoWindow.close();
          });
-
-         
-      }
-
-      function Enter_Check() {
-         // 인풋에서 엔터키 입력시
-         if (event.keyCode == 13) {
-            searchLocations();
-         }
-      }
-
-      // 쿼리 스트링 사용
-      function getQueryStringObject() {
-         var a = window.location.search.substr(1).split('&');
-         if (a == "") return {};
-         var b = {};
-         for (var i = 0; i < a.length; ++i) {
-            var p = a[i].split('=', 2);
-            if (p.length == 1)
-                  b[p[0]] = "";
-            else
-                  b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
-         }
-         return b;
       }
 
       function searchLocations() {
@@ -458,19 +393,11 @@ include('sidebar.php');
          locationSelect.appendChild(option);
       }
 
-      function clearLocations2() {
-         infoWindow.close();
-         for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-         }
-         markers.length = 0;
-      }
-
-      function favorLocation(map_id) {
-         clearLocations2();
+      function searchLocationsNear(center) {
+         clearLocations();
 
          var radius = document.getElementById('radiusSelect').value;
-         var searchUrl = 'map/favLocator.php?mapid=' + map_id;
+         var searchUrl = 'map/mapLocator.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius;
          downloadUrl(searchUrl, function (data) {
             var xml = parseXml(data);
             var markerNodes = xml.documentElement.getElementsByTagName("marker");
@@ -486,47 +413,12 @@ include('sidebar.php');
                   parseFloat(markerNodes[i].getAttribute("lng")));
                var type = markerNodes[i].getAttribute("type");
                var f_status = markerNodes[i].getAttribute("f_status");
-               var usr_id = markerNodes[i].getAttribute("u_id");
-               var fmap_id = markerNodes[i].getAttribute("m_id");
                
-               // createMarker(id, latlng, name, address, type, f_status);
+               createOption(name, distance, i);
                createMarker(id, latlng, name, address, type, f_status);
                bounds.extend(latlng);
             }
-            map.fitBounds(bounds);
-
-         });
-      }
-
-      function searchLocationsNear(center) {
-         clearLocations();
-
-         var radius = document.getElementById('radiusSelect').value;
-         var searchUrl = 'map/mapLocator.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius;
-
-         downloadUrl(searchUrl, function (data) {
-            var xml = parseXml(data);
-            var markerNodes = xml.documentElement.getElementsByTagName("marker");
-            var bounds = new google.maps.LatLngBounds();
-            for (var i = 0; i < markerNodes.length; i++) {
-               var id = markerNodes[i].getAttribute("id");
-               var name = markerNodes[i].getAttribute("name");
-               var city = markerNodes[i].getAttribute("city");
-               var address = markerNodes[i].getAttribute("address");
-               var distance = parseFloat(markerNodes[i].getAttribute("distance"));
-               var latlng = new google.maps.LatLng(
-                  parseFloat(markerNodes[i].getAttribute("lat")),
-                  parseFloat(markerNodes[i].getAttribute("lng")));
-               var type = markerNodes[i].getAttribute("type");
-               // var f_status = markerNodes[i].getAttribute("f_status");
-               // var usr_id = markerNodes[i].getAttribute("u_id");
-               // var fmap_id = markerNodes[i].getAttribute("m_id");
-               
-               createOption(name, distance, i);
-               createMarker(id, latlng, name, address, type);
-               bounds.extend(latlng);
-            }
-            map.fitBounds(bounds);
+            map.fitBounds(bounds, 1);
 
             locationSelect.style.visibility = "visible";
             locationSelect.onchange = function () {
@@ -536,8 +428,10 @@ include('sidebar.php');
          });
       }
 
-      function createMarker(id, latlng, name, address, type) {
+      function createMarker(id, latlng, name, address, type, f_status) {
          // console.log(vname, addr);
+
+         // var html = "<b>" + name + "</b> <br />" + address + "<br />type : " + type + "<br><button type='button' onclick='addFavor();'>즐겨찾기</button>";
 
          // <div>
          var infowincontent = document.createElement('div');
@@ -572,20 +466,13 @@ include('sidebar.php');
          var addBtn = document.createElement('button');
          addBtn.setAttribute('class', 'w3-button w3-teal w3-hover-green');
          addBtn.setAttribute('id', 'favBtn');
-         addBtn.innerHTML = "즐겨찾기";
-         // if(f_status == "" || f_status == undefined) {
-         //    addBtn.innerHTML = "즐겨찾기";
-         // } else {
-         //    if (f_status == 1) {
-         //       addBtn.innerHTML = "즐겨찾기 삭제";
-         //    }
-            
-         //    if (f_status == 0) {
-         //       addBtn.innerHTML = "즐겨찾기";
-         //    }
-         // }
+         if(f_status == "" || f_status == null) {
+            addBtn.innerHTML = "즐겨찾기";
+         } else {
+            addBtn.innerHTML = "즐겨찾기 삭제";
+         }
          addBtn.onclick = function () {
-            addFavor(id);
+            addFavor(id, f_status);
             // if (addBtn.innerHTML == "즐겨찾기") {
             //    addBtn.innerHTML = "즐겨찾기 삭제";
             // } else {
@@ -653,8 +540,7 @@ include('sidebar.php');
       }
 
       // Ajax
-      // function addFavor(num, f_status) {
-         function addFavor(num) {
+      function addFavor(num, f_status) {
          if (num == "") {
             return;
          } else {
@@ -670,18 +556,17 @@ include('sidebar.php');
                   alert(this.responseText);
                   var fBtn = document.getElementById('favBtn').innerHTML;
                   
-                  // if (f_status == null || f_status == undefined) { // 로그인 안했을 때
-                     // document.getElementById('favBtn').innerHTML = "즐겨찾기";
-                  // } else { // 로그인 했을 경우
+                  if (f_status == null || f_status == undefined) { // 로그인 안했을 때
+                     document.getElementById('favBtn').innerHTML = "즐겨찾기";
+                  } else { // 로그인 했을 경우
                      if (fBtn == "즐겨찾기") {
                         document.getElementById('favBtn').innerHTML = "즐겨찾기 삭제";
                      } else {
                         document.getElementById('favBtn').innerHTML = "즐겨찾기";
                      }
-                  // }
+                  }
                }
             };
-
             xmlhttp.open("GET","favControl.php?q="+num, true);
             xmlhttp.send();
          }
@@ -690,7 +575,7 @@ include('sidebar.php');
       function doNothing() {}
    </script>
    <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjns8IGUUxUZmAQxSxHQfXVS3ns5QdMkg&callback=initMap">
    </script>
 
 <!-- //Map Script -->

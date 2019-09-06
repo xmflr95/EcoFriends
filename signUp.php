@@ -9,6 +9,7 @@
 
    <!-- W3.CSS -->
    <link rel="stylesheet" href="/css/w3.css">
+   <link rel="stylesheet" href="/css/w3-colors-flat.css">
    <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
 
    <!-- font-awesome -->
@@ -98,17 +99,17 @@
             <div class="w3-section">
                <label><b>Email address</b></label>
                <input class="w3-input w3-border w3-margin-bottom" type="email" placeholder="Enter Email" name="email"
-                  required autofocus tabindex="1">
+                  required>
                <label><b>Name</b></label>
                <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter Name" name="username"
-                  required tabindex="2">
+                  required>
                <label><b>Password</b></label>
                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="Enter Password"
-                  name="pwd" required tabindex="3">
+                  name="pwd" required>
                <label><b>Confirm Password</b></label>
                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="Confirm Password"
-                  name="cPwd" required tabindex="4">
-               <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit" tabindex="5">Sign up</button>
+                  name="cPwd" required>
+               <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Sign up</button>
             </div>
          </form>
       <?php

@@ -89,10 +89,10 @@
             <div class="w3-section">
                <label><b>Email Address</b></label>
                <input class="w3-input w3-border w3-section" type="text" placeholder="Enter Username"
-                  name="email" required autofocus tabindex="1">
+                  name="email" required>
                <label><b>Password</b></label>
-               <input class="w3-input w3-border w3-section" type="password" placeholder="Enter Password" name="pwd" required tabindex="2">
-               <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit" tabindex="3">Login</button>
+               <input class="w3-input w3-border w3-section" type="password" placeholder="Enter Password" name="pwd" required>
+               <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
                <!-- <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me -->
             </div>
          </form>
