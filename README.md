@@ -1,6 +1,5 @@
 # EcoFriends
-=============
-**Link**: xmflr95.cafe24.com
+**Link**: <xmflr95.cafe24.com>
 
 ![index](./git_image/index.png)
 <br><br>
