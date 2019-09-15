@@ -1,6 +1,6 @@
 <?php
 $servername = "localhost";
-$username = "xmflr95";
-$password = "Wificold@369";
-$dbname = "xmflr95";
+$username = <Your MySQL Username>;
+$password = <UserMySQL DB password>;
+$dbname = <Your MySQL dbname>;
 ?>
